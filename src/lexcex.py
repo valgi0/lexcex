@@ -16,7 +16,8 @@ selected_command = ''
 verbosity = False
 listing = False
 adding = False
-
+cleaning = False
+removing = False
 
 # -------------------------- JSON KEY STRING -------------------------
 COMMAND = 'command'
@@ -43,12 +44,17 @@ parser.add_argument('--list', '-l', action="store_true",
 parser.add_argument('--verbosity', '-v', action="store_true")
 parser.add_argument('--add', '-a', action="store_true",
                     help="Add examples to selected command")
-
+parser.add_argument('--clean', action="store_true",
+                    help='Clean all examples')
+parser.add_argument('--remove', action='store_true',
+                    help='Remove all examples of a single command')
 parse = parser.parse_args()
 selected_command = parse.command[0]
 listing = parse.list
 verbosity = parse.verbosity
 adding = parse.add
+cleaning = parse.clean
+removing = parse.remove
 
 if verbosity:
     print("[INFO] Command selected: " + str(selected_command))
@@ -59,13 +65,36 @@ if verbosity:
 
 def main():
     setUpDirs()
+    checkFlags()
     if listing:
         listCommands()
         exit()
     if adding:
         addExamples()
         exit()
+    if removing:
+        deleteOne()
+    if cleaning:
+        deleteAll()
     menu()
+
+
+def checkFlags():
+    if adding and selected_command == 'none':
+        print('You MUST specify for wich command an example is being added')
+        exit()
+    if removing and selected_command == 'none':
+        print('You MUST specify the command to remove')
+        exit()
+    if cleaning and (removing | adding | listing):
+        print("You can select more commands at once.. do better next time")
+        exit()
+    if adding and (listing | removing):
+        print("You can select more commands at once.. do better next time")
+        exit()
+    if (removing and listing):
+        print("You can select more commands at once.. do better next time")
+        exit()
 
 
 def menu():
@@ -194,7 +223,7 @@ def listCommands(endchar='\n'):
     print('Command found {}\n'.format(len(commands)))
     for c in commands:
         print(c, end=endchar)
-    print('\n-'*80)
+    print('\n' + '-'*80)
 
 
 def addExamples():
