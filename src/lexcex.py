@@ -18,6 +18,8 @@ listing = False
 adding = False
 cleaning = False
 removing = False
+exampling = False
+
 
 # -------------------------- JSON KEY STRING -------------------------
 COMMAND = 'command'
@@ -44,6 +46,8 @@ parser.add_argument('--list', '-l', action="store_true",
 parser.add_argument('--verbosity', '-v', action="store_true")
 parser.add_argument('--add', '-a', action="store_true",
                     help="Add examples to selected command")
+parser.add_argument('--examples', '-e', action="store_true",
+                    help = "See examples stored for a command")
 parser.add_argument('--clean', action="store_true",
                     help='Clean all examples')
 parser.add_argument('--remove', action='store_true',
@@ -55,6 +59,8 @@ verbosity = parse.verbosity
 adding = parse.add
 cleaning = parse.clean
 removing = parse.remove
+exampling = parse.examples
+
 
 if verbosity:
     print("[INFO] Command selected: " + str(selected_command))
@@ -74,8 +80,13 @@ def main():
         exit()
     if removing:
         deleteOne()
+        exit()
     if cleaning:
         deleteAll()
+        exit()
+    if exampling:
+        printExamples()
+        exit()
     menu()
 
 
@@ -86,15 +97,21 @@ def checkFlags():
     if removing and selected_command == 'none':
         print('You MUST specify the command to remove')
         exit()
-    if cleaning and (removing | adding | listing):
+    if exampling and selected_command == 'none':
+        print('You MUST specify a command you wish see stored examples')
+        exit()
+    if cleaning and (removing | adding | listing | exampling):
         print("You can select more commands at once.. do better next time")
         exit()
-    if adding and (listing | removing):
+    if adding and (listing | removing | exampling):
         print("You can select more commands at once.. do better next time")
         exit()
-    if (removing and listing):
+    if  removing and (listing | exampling):
         print("You can select more commands at once.. do better next time")
         exit()
+    if listing and exampling:
+        print("You can select more commands at once.. do better next time")
+        exit() 
 
 
 def menu():
@@ -211,7 +228,7 @@ def printExamples():
         os.system('clear')
         for line in fd.readlines():
             printExample(json.loads(line))
-    print("#"*80)
+    print('\n' + "#"*80)
 
 def printExample(example):
     print('\n' + "#"*80+"\n")
@@ -227,7 +244,7 @@ def askCommand():
     global selected_command
     print("Existing commands: ")
     listCommands(' ')
-    selected_command = input("\n\n--->Type the command desired: ")
+    selected_command = input("\n\nType the command desired: ")
 
 
 def listCommands(endchar='\n'):
@@ -251,6 +268,9 @@ def addExamples():
     desc = input("Insert a short description: ")
     check = input("Would you like insert a short description for flags?[Y/N]:")
     flags = dict()
+    command_complete = dict()
+    command_complete[DESCR] = desc
+    command_complete[COMMAND] = com
     if 'y' in check.lower():
         while True:
             flag = input("Type the flag[STOP to end]: ")
@@ -258,9 +278,6 @@ def addExamples():
                 break
             desc = input("Insert description: ")
             flags[flag] = desc
-    command_complete = dict()
-    command_complete[COMMAND] = com
-    command_complete[DESCR] = desc
     command_complete[FLAGS] = flags
     outfile = str(user_home.joinpath(lexcex_dir)
                   .joinpath(lexcex_examples_dir)
