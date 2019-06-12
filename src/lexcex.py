@@ -3,7 +3,7 @@
 import argparse
 from pathlib import Path
 import json
-
+import os
 
 # ------------------------- SETTING VARIABLES ----------------------------
 user_home = Path.home()
@@ -98,6 +98,7 @@ def checkFlags():
 
 
 def menu():
+    os.system('clear')
     print('''
  ▄            ▄▄▄▄▄▄▄▄▄▄▄  ▄       ▄  ▄▄▄▄▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄▄▄▄  ▄       ▄
 ▐░▌          ▐░░░░░░░░░░░▌▐░▌     ▐░▌▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌▐░▌     ▐░▌
@@ -120,39 +121,50 @@ def menu():
 ╚███╔███╔╝███████╗███████╗╚██████╗╚██████╔╝██║ ╚═╝ ██║███████╗
  ╚══╝╚══╝ ╚══════╝╚══════╝ ╚═════╝ ╚═════╝ ╚═╝     ╚═╝╚══════╝
           ''')
-    print("Menu: \n")
-    print("1. Add examples")
-    print("2. View examples")
-    print("3. List all commands")
-    print("4. Delete Section")
-    print("5. Exit")
-    choise = input('Do your choise: ')
-    if int(choise) not in range(1, 6):
-        print("Just 1,2,3,4, allowed mate... What did you think?")
-        exit()
-    if int(choise) == 1:
-        askCommand()
-        addExamples()
-    if int(choise) == 3:
-        listCommands()
-    if int(choise) == 2:
-        askCommand()
-        printExamples()
-    if int(choise) == 4:
-        deleteMenu()
+    choise = -1
+    while int(choise) != 5:
+        if int(choise) != -1:
+            os.system('clear')
+        print("*"*50)
+        print("\tMenu: \n")
+        print("*"*50)
+        print("\n1. Add examples")
+        print("2. View examples")
+        print("3. List all commands")
+        print("4. Delete Section")
+        print("5. Exit")
+        choise = input('\nDo your choise: ')
+        if int(choise) not in range(1, 6):
+            print("Just 1,2,3,4, allowed mate... What did you think?")
+            exit()
+        if int(choise) == 1:
+            askCommand()
+            addExamples()
+            input("Press any key to continue....")
+        if int(choise) == 3:
+            listCommands()
+            input("Press any key to continue....")
+        if int(choise) == 2:
+            askCommand()
+            printExamples()
+            input("Press any key to continue....")
+        if int(choise) == 4:
+            deleteMenu()
+            input("Press any key to continue....")
 
 
 def deleteMenu():
     ok = True
     choise = ''
     while ok:
+        os.system('clear')
         print("\n---- Delete Menu ---- ")
         print("\n1. Delete All Commands")
         print("2. Delete Single Command")
         print("3. Delete Examples")
         choise = input('do your choise: ')
         if int(choise) not in range(1, 6):
-            print("Just 1,2,3,4, allowed mate... What did you think?")
+            input("Just 1,2,3,4, allowed mate... What did you think?")
         else:
             ok = False
     if int(choise) == 1:
@@ -220,7 +232,13 @@ def askCommand():
 def listCommands(endchar='\n'):
     commands_dir = user_home.joinpath(lexcex_dir).joinpath(lexcex_examples_dir)
     commands = [c.name for c in commands_dir.iterdir() if c.is_file()]
-    print('Command found {}\n'.format(len(commands)))
+    os.system('clear')
+    print("#" * 80)
+    print("\t\t List section ")
+    print("#" * 80)
+    print('\n' + '-'*80)
+    print('Command found {} \t|\n'.format(len(commands)))
+    print('-----------------------')
     for c in commands:
         print(c, end=endchar)
     print('\n' + '-'*80)
