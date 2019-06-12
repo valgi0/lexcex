@@ -208,19 +208,20 @@ def printExamples():
                .joinpath(selected_command))
     if example.exists():
         fd = example.open('r')
+        os.system('clear')
         for line in fd.readlines():
             printExample(json.loads(line))
-
+    print("#"*80)
 
 def printExample(example):
-    print("#"*80+"\n")
-    print("Command: " + example[COMMAND])
-    print("Description: " + example[DESCR])
+    print('\n' + "#"*80+"\n")
+    print("Command:  " + example[COMMAND])
+    print("\nDescription: \n" + example[DESCR])
     if len(example[FLAGS]) >= 1:
-        print("FLAGS: ")
+        print("------------ FLAGS ------------")
         for key, value in example[FLAGS].items():
             print("Flag: {}  => {} ".format(key, value))
-
+    
 
 def askCommand():
     global selected_command
